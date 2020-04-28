@@ -1,0 +1,46 @@
+#! /usr/bin/node
+
+require(`./lib/nano.js`);
+
+busy = 0;
+wifi = args[0];
+
+
+
+reset = function()
+{
+   if(!busy){return};
+   if(isin(exec(`nmcli radio wifi`),"enabled")){exec(`nmcli radio wifi off`);};
+
+   // note(`wifi is off`);
+   exec(`nmcli radio wifi on`);
+
+   tick.while(()=>{return !ping(`example.com`)},()=>
+   {
+      // note(`wifi is on`);
+      busy=0;
+   },1000);
+};
+
+
+
+check = function()
+{
+   if(busy){return}; busy=1;  let resp,mpbs;
+
+   try{resp=exec(`speedtest --no-upload --single --json --timeout 3`);}catch(e){};
+   try{resp=JSON.parse(resp);}catch(e){};
+   if(!resp||!resp.download){reset(); return;};
+   mbps=((resp.download/1000)/1000);  if(mbps>0.6){busy=0; return};
+
+   reset();
+};
+
+
+
+check();
+
+setInterval(()=>
+{
+   check();
+},10000);

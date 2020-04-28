@@ -1,0 +1,27 @@
+#! /usr/bin/node
+
+require(`./lib/nano.js`);
+toolName = args.shift();
+omniTool = {};
+
+
+omniTool.albumToHtm = function(fold,file,html,covr,lovr,play)
+{
+   if(!fold){fold=argsPath}; if(!html){html=`${fold}/browse.html`}; file=`${fold}/album.html`;
+   if(!covr){covr=`${fold}/cover.jpg`}; if(!lovr){lovr=`${fold}/lover.png`}; if(!play){play=`${fold}/music.opus`};
+   if(!isee(html)){fail(`invalid HTML-file path: ${html}`); return}; html=pget(html);
+
+   if(isin(html,`{:cover:}`)&&isee(covr)){covr=durl(covr); html=html.split(`{:cover:}`).join(covr);};
+   if(isin(html,`{:lover:}`)&&isee(lovr)){lovr=durl(lovr); html=html.split(`{:lover:}`).join(lovr);};
+   if(isin(html,`{:music:}`)&&isee(play)){play=durl(play); html=html.split(`{:music:}`).join(play);};
+
+   pset(file,html); dump(`done`);
+};
+
+
+(function()
+{
+   if(!toolName){fail(`no toolName specified`); return};
+   if(!omniTool[toolName]){fail(`"${toolName}" is undefined`); return};
+   omniTool[toolName].apply(null,args);
+})();

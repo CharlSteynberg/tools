@@ -1,0 +1,12 @@
+#! /usr/bin/node
+
+require(`./lib/nano.js`);
+
+
+
+(function(filePath,baseName,textResl)
+{
+   filePath = args[0]; baseName = filePath.split(`.`)[0];
+   textResl = durl(filePath); fsys.writeFileSync(`${baseName}-dataURL.txt`,textResl);
+   dump(`done writing: ${baseName}-dataURL.txt`);
+})();

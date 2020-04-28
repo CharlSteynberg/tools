@@ -1,0 +1,32 @@
+#! /usr/bin/node
+
+require(`./lib/nano.js`);
+
+
+dest=args[1]; path=`/home/argon/Desktop/Music/${dest}`; from=args[0];
+if(from.startsWith(`https://www.youtube.com/watch?v=`)){from=("https://youtu.be/"+stub(from,"=")[2])};
+if(!isee(path)){fsys.mkdirSync(path);}; process.chdir(path);
+
+dbus=note(`<h1>Downloading</h1><h3>${dest}</h3>`,true);
+
+exec(`youtube-dl --extract-audio --embed-thumbnail ${from}`,(evnt)=>
+{
+   if(evnt.type=='fail')
+   {
+      if(isin(evnt.data,"thumbnail embedding")){return};
+      fail(evnt.data);return;
+   };
+
+   let bufr=evnt.data;  let prgs=(isin(bufr,"]")&&isin(bufr,"%"));
+   prgs = (prgs?Math.floor(bufr.split("]").pop().split("%").shift()*1):VOID);
+   if(prgs){note("",dbus,prgs);return};
+
+   if(isin(bufr,"Deleting original file ")){wait(3,()=>
+   {
+      list=fsys.readdirSync(path); imgp=list[0]; audp=(list[1]||"");
+      if(audp.endsWith('.jpg')){imgp=list[1]; audp=list[0];}; fext=audp.split('.').pop();
+      fsys.renameSync(`${path}/${audp}`,`${path}/${dest}.${fext}`);
+      fsys.renameSync(`${path}/${imgp}`,`${path}/cover.jpg`);
+      note(`Done: ${dest}`);
+   })};
+});

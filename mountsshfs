@@ -1,0 +1,3 @@
+#! /usr/bin/bash
+
+sshfs -o password_stdin $1 $2 <<< "$3"
